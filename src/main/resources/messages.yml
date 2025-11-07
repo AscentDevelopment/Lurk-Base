@@ -1,0 +1,28 @@
+# Lurk (Beta 1.7.3) — messages.yml
+# Simple text lines; use section symbols (§) or & will be translated by your code if you add it.
+
+prefix: "§6Lurk §7»§r "
+
+generic:
+  no_permission: "§cYou do not have permission."
+  player_not_found: "§cPlayer not found."
+  no_user_record: "§cNo user record (not tracked yet)."
+  unknown_command: "§cUnknown command."
+
+mitigation:
+  applied: "§aApplied §e%key% §ato §f%player%§7%extra%"
+  removed: "§aRemoved §e%key% §afrom §f%player%"
+  cleared: "§aCleared all mitigations for §f%player%"
+  active_none: "§7No active mitigations."
+  active_list: "§7Active: §f%list%"
+
+banwave:
+  queued: "§aQueued §e%player% §7for banwave."
+  dup: "§e%player% §7is already queued."
+  removed: "§aRemoved §e%player% §7from queue."
+  empty: "§7<empty>"
+  running_public: "§6Banwave underway…"
+  running_silent: "§8[Silent] Banwave underway…"
+
+info:
+  header: "§6Lurk §7— §fPlayer Info"

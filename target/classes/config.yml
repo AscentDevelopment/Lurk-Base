@@ -1,0 +1,17 @@
+# Lurk (Beta 1.7.3) — config.yml
+# General plugin settings
+
+debug:
+  enabled: false
+  # Log mitigation applications/removals to console
+  log_mitigations: true
+
+checks:
+  # Global on/off for all checks (per-check control is in checks.yml)
+  enabled: true
+
+mitigations:
+  # Safety guard: if true, a mitigation key missing from the registry is ignored silently
+  ignore_unknown_keys: true
+  # Expired mitigation reap interval (ms). 0 to disable periodic reap.
+  reap_interval_ms: 0

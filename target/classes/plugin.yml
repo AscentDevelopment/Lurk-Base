@@ -1,0 +1,67 @@
+# To learn about plugin YAML attributes, visit: http://wiki.bukkit.org/Plugin_YAML or https://www.spigotmc.org/wiki/plugin-yml/
+# To learn about semantic versioning, visit: https://semver.org
+main: dev.ascent.anticheat.Lurk
+version: 1.0.0
+name: Lurk
+author: oipika
+website: https://ascentdev.xyz
+description: Advanced Anticheat for Beta 1.7.3
+
+commands:
+  lurk:
+    description: Lurk root command
+    aliases: [ac, anticheat]
+    permission: lurk.use
+  alerts:
+    description: Toggle or control alerts
+    aliases: [togglealerts, ta]
+    permission: lurk.alerts
+  banwave:
+    description: Manage Lurk banwave
+    usage: /<command>
+    aliases: [bw]
+    permission: lurk.banwave
+  bypass:
+    description: Bypass specific or all checks
+    aliases: [exempt]
+    permission: lurk.bypass 
+  info:
+    description: Show player AC-relevant info
+    aliases: [whois, inspect]
+    permission: lurk.info
+  logs:
+    description: Show Lurk logs for a player
+    aliases: [violations, vl]
+    permission: lurk.logs
+  version:
+    description: Show Lurk version
+    aliases: [ver, about]
+    permission: lurk.use
+  reload:
+    description: Reload Lurk
+    aliases: [rl]
+    permission: lurk.reload
+  mitigation:
+    description: Manage mitigations
+    aliases: [miti, mit]
+    permission: lurk.mitigation
+
+permissions:
+  lurk.use:
+    default: true
+  lurk.info:
+    default: op
+  lurk.version:
+    default: true
+  lurk.alerts:
+    default: op
+  lurk.banwave:
+    default: op
+  lurk.bypass:
+    default: op
+  lurk.mitigation:
+    default: op
+  lurk.logs:
+    default: op
+  lurk.reload:
+    default: op

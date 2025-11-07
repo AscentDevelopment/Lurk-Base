@@ -1,0 +1,52 @@
+# Lurk (Beta 1.7.3) — checks.yml
+# Map each check id -> rule for the mitigation engine.
+# Your engine uses the id format: "<CheckName>.<Variant>" e.g. "Speed.A".
+#
+# Valid mitigation keys (registered in MitigationManager.registerDefaults()):
+#   angle, attack_cooldown, autoblock_cancel, cps_cap, crit_cancel, damage, debounce,
+#   fake_damage, knockback, reach, reversal, setback, slowdown, block, cancel_interact,
+#   inventory_lock, run_command, potion
+#
+# Fields:
+#   enabled: true/false
+#   trigger_vl: first integer VL at/after which to apply
+#   every_vl: if >0, re-apply on trigger_vl + n*every_vl
+#   duration_ms: 0 = no timeout; otherwise auto-expire
+#   mitigation: one of the keys above
+#   params: free-form map of string -> string options for the mitigation
+#
+# Example: Speed.B alternative that slows rather than teleports
+#
+#  Speed.B:
+#    enabled: false
+#    trigger_vl: 4
+#    every_vl: 2
+#    duration_ms: 8000
+#    mitigation: slowdown
+#    params:
+#      # horizontal and vertical multipliers in [0.0 .. 1.0]
+#      h_scale: "0.65"
+#      y_scale: "0.85"
+
+
+checks:
+
+  Speed.A:
+    enabled: true
+    trigger_vl: 5
+    every_vl: 3
+    duration_ms: 10000
+    mitigation: setback
+    params: {}
+
+  # BadPackets
+  BadPackets.A:
+    enabled: true
+    trigger_vl: 3
+    every_vl: 2
+    duration_ms: 15000
+    mitigation: block
+    params:
+      # deny_place / deny_break flags (both default true if omitted)
+      deny_place: "true"
+      deny_break: "true"

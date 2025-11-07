@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>dev.ascent.anticheat</groupId>
+  <artifactId>lurk</artifactId>
+  <version>1.0.0</version>
+  <name>Lurk</name>
+  <description>Advanced Anticheat for Beta 1.7.3</description>
+  <url>https://ascentdev.xyz</url>
+
+  <properties>
+    <maven.compiler.source>8</maven.compiler.source>
+    <maven.compiler.target>8</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <finalName>${project.artifactId}-${project.version}</finalName>
+  </properties>
+
+  <build>
+    <finalName>${finalName}</finalName>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
+
+    <plugins>
+      <!-- Install local BetaProtocollib into ~/.m2 so Shade can include it -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>install-betaprotocollib</id>
+            <phase>initialize</phase>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+            <configuration>
+              <file>${project.basedir}/libs/BetaProtocollib-1.0-SNAPSHOT.jar</file>
+              <groupId>com.github.dirtpowered</groupId>
+              <artifactId>betaprotocollib</artifactId>
+              <version>1.0-SNAPSHOT</version>
+              <packaging>jar</packaging>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Compiler -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.13.0</version>
+        <configuration>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+          <encoding>${project.build.sourceEncoding}</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- Plain jar (optional manifest entries) -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.4.1</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>${project.name}</Implementation-Title>
+              <Implementation-Version>${project.version}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+          <finalName>${finalName}</finalName>
+        </configuration>
+      </plugin>
+
+      <!-- Shade ONLY betaprotocollib and relocate it -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.github.dirtpowered:betaprotocollib</include>
+                </includes>
+              </artifactSet>
+
+              <createDependencyReducedPom>false</createDependencyReducedPom>
+
+              <relocations>
+                <relocation>
+                  <pattern>com.github.dirtpowered.betaprotocollib</pattern>
+                  <shadedPattern>dev.ascent.shaded.betaprotocollib</shadedPattern>
+                </relocation>
+                <!-- Optional: relocate Netty if present and you want isolation
+                <relocation>
+                  <pattern>io.netty</pattern>
+                  <shadedPattern>dev.ascent.shaded.io.netty</shadedPattern>
+                </relocation>
+                -->
+              </relocations>
+
+              <filters>
+                <filter>
+                  <artifact>*:*</artifact>
+                  <excludes>
+                    <exclude>META-INF/*.SF</exclude>
+                    <exclude>META-INF/*.DSA</exclude>
+                    <exclude>META-INF/*.RSA</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- Optional: copy built jar to a plugins dir if PLUGINS_DIR is set -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.7.1</version>
+        <executions>
+          <execution>
+            <id>copy-plugin-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>jar</type>
+                  <destFileName>${finalName}.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${env.PLUGINS_DIR}</outputDirectory>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <dependencies>
+    <!-- CraftBukkit 1060 (Beta 1.7.3) - provided by server, do NOT shade -->
+    <dependency>
+      <groupId>org.bukkit</groupId>
+      <artifactId>craftbukkit</artifactId>
+      <version>1060</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/libs/craftbukkit-1060.jar</systemPath>
+    </dependency>
+
+    <!-- BetaProtocollib - now a normal compile dep; will be shaded & relocated -->
+    <dependency>
+      <groupId>com.github.dirtpowered</groupId>
+      <artifactId>betaprotocollib</artifactId>
+      <version>1.0-SNAPSHOT</version>
+      <scope>compile</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>copy-to-plugins</id>
+      <activation>
+        <property>
+          <name>env.PLUGINS_DIR</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- reuses the maven-dependency-plugin execution above -->
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
